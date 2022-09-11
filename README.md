@@ -24,7 +24,14 @@ Customize this README.md however you want to turn it into documentation for your
  - Make three states: a board set to an initial state of an array of nine values all set to null,
                       an xIsNext set to an intial state of true to keep track of whose turn it is,
                       a winner variable that passes the current board state to the calculateOutcome function
- -  
+ - Make a handleClick function that checks for a current winner in state or if the currently clicked cell has a value
+  - If it does, the function should do nothing
+  - Otherwise, check the current player turn in state and fill the cell with that player's character (X or O)
+  - Set the new board state and set the player turn to the opposite of whatever it currently is to switch turns
+ - Make a resetGame function that return a button
+  - The button should reset the game board in state to all null values and set the current player to X
+8. Add JSX to the Game component that displays the winner if there is one, or the current player if there's no current winner in state
+9. Render the resetGame function in the JSX to render the reset button to the page
 ## Reflection
 
 What different approaches or techniques did you consider when planning your implementation? What were the advantages and disadvantages of those alternatives?
