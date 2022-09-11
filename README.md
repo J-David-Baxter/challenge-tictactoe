@@ -20,7 +20,11 @@ Customize this README.md however you want to turn it into documentation for your
  - The function uses a 2-D array to hold 8 arrays of 3 cells in a row (all 8 of the possible winning moves in tic-tac-toe)
  - The funcion then loops through this array and checks to see if the current state of the board has any winning moves that match one of the winning move arrays
  - If a winning move is found, the winning character (X or O) is returned, otherwise we return null since nobody has won yet
-
+7. The Game component houses the value and onClick props being passed down to Board and Cell, as well as the state of the Board and Cells
+ - Make three states: a board set to an initial state of an array of nine values all set to null,
+                      an xIsNext set to an intial state of true to keep track of whose turn it is,
+                      a winner variable that passes the current board state to the calculateOutcome function
+ -  
 ## Reflection
 
 What different approaches or techniques did you consider when planning your implementation? What were the advantages and disadvantages of those alternatives?
