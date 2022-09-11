@@ -7,7 +7,9 @@ Customize this README.md however you want to turn it into documentation for your
 ## Project Plan
 
 1. The game will be created using React
-2. 
+2. Create three components: Board, Game, and Cell
+3. The Game component will hold the entire game, the Board component will keep track of the board, and the Cell component will keep track of each individual cell on the board
+4. 
 
 ## Reflection
 
