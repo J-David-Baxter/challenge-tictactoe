@@ -17,3 +17,31 @@ export function calculateOutcome(cells) {
     }
     return null;
 }
+
+export function findEmptyCells(arr) {
+    const arrIndexes = Object.keys(arr);
+    const emptyIndexes = arrIndexes.filter(index => arr[index] === null);
+    return emptyIndexes;
+}
+
+export function generateRandomNumber(lower, upper) {
+    return Math.floor(Math.random() * (upper + 1 - lower) + lower);
+}
+
+export function isArrayEmpty(arr) {
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] !== null) {
+            return false;
+        }
+    }
+    return true;
+}
+
+export function isArrayFull(arr) {
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] === null) {
+            return false;
+        }
+    }
+    return true;
+}
