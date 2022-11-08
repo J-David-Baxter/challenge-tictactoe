@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { calculateOutcome, findEmptyCells, generateRandomNumber, isArrayEmpty, isArrayFull } from "../utils";
+import React, { useState, useEffect } from "react";
+import { calculateOutcome, findEmptyCells, generateRandomNumber, isArrayEmpty, winningMove, blockingMove } from "../utils";
 import Board from "./Board";
 
 const style = {
@@ -22,6 +22,25 @@ const Game = () => {
     const winner = calculateOutcome(board);
     const [singlePlayer, setSinglePlayer] = useState(false);
     const isBoardEmpty = isArrayEmpty(board);
+    const [scoreboard, setScoreboard] = useState({
+        X: 0,
+        O: 0,
+        tie: 0,
+    })
+
+    useEffect(() => {
+        if (winner === "X") {
+            setScoreboard({...scoreboard, X: scoreboard.X + 1});
+        } else if (winner === "O") {
+            setScoreboard({...scoreboard, O: scoreboard.O + 1});
+        } else if (winner === "tie") {
+            setScoreboard({...scoreboard, tie: scoreboard.tie + 1});
+        }
+    }, [winner]);
+
+    useEffect(() => {
+        setScoreboard({X:0, O:0, tie:0});
+    }, [singlePlayer])
 
     const handleClick = (i) => {
         const boardCopy = [...board];
@@ -31,11 +50,23 @@ const Game = () => {
         setXIsNext(!xIsNext);
         if (singlePlayer === true && calculateOutcome(boardCopy) === null) {
             setTimeout(() => {
-                let emptyCells = findEmptyCells(boardCopy);
-                let randomIndex = generateRandomNumber(0, emptyCells.length-1);
-                boardCopy[emptyCells[randomIndex]] = 'O';
-                setBoard(boardCopy);
-                setXIsNext(true);
+                if (winningMove(boardCopy)) {
+                    let winMove = winningMove(boardCopy);
+                    boardCopy[winMove] = "O";
+                    setBoard(boardCopy);
+                    setXIsNext(true);
+                } else if(blockingMove(boardCopy) || blockingMove(boardCopy) === 0) {
+                    let blockMove = blockingMove(boardCopy);
+                    boardCopy[blockMove] = "O";
+                    setBoard(boardCopy);
+                    setXIsNext(true);
+                } else {
+                    let emptyCells = findEmptyCells(boardCopy);
+                    let randomIndex = generateRandomNumber(0, emptyCells.length-1);
+                    boardCopy[emptyCells[randomIndex]] = "O";
+                    setBoard(boardCopy);
+                    setXIsNext(true);
+                }
             }, 1000);
         }
     }
@@ -63,11 +94,16 @@ const Game = () => {
             <div style={style}>
                 <p style={style}>
                     {
-                        isArrayFull(board) && !winner ? "It's a draw!" 
+                        winner === "tie" ? "It's a draw!" 
                         :
                         winner ? `${winner} Wins!` : `Current Player: ${xIsNext ? 'X' : 'O'}`
                     }
                 </p>
+                {
+                    singlePlayer ? <p>Player: {scoreboard.X} Computer: {scoreboard.O} Ties: {scoreboard.tie}</p>
+                    :
+                    <p>X Wins: {scoreboard.X} O Wins: {scoreboard.O} Ties: {scoreboard.tie}</p>
+                }
                 {resetGame()}
             </div>
         </>

@@ -74,6 +74,65 @@ Single Player Mode
  - Import the new function into the Game component
  - In the existing ternary in the JSX of the Game component, make another ternary that displays "It's a draw!" if isArrayFull(board) is true and there is no current winner, otherwise display the existing ternary expression (displays the winner or the current player's turn)
 
+## Advanced Project Plan
+1. Set a state called scoreboard that starts as an object with three properties (X, O, tie) all set to 0
+2. In the utils folder, modify the calculateOutcome function so that it can return the string "tie"
+ - Outside the for loop inside the function, and before the return null statement, write a new if statement
+  - Use the isArrayFull function to check if the current array being passed into calculateOutcome is full
+  - If it is, return "tie"
+3. Back in the game folder, write a useEffect that checks the current value of winner
+ - If winner is "X", increase scoreboard.X by 1
+ - If winner is "O", increase scoreboard.O by 1
+ - If winner is "tie", increase scoreboard.tie by 1
+ - Add winner to the context array of the useEffect
+4. Add another useEffect that resests the scoreboard whenever the game mode changes
+ - In the new useEffect, set the scoreboard so that all properties are equal to 0 again
+ - Add singlePlayer to the context array
+5. In the JSX, write a ternary operator beneath where the current player is displayed
+ - If the current game mode is two player, display the wins for X, O, and show the ties
+ - If the current game is single player, display the wins for X, label the O wins as computer wins, and show the ties
+
+(Computer Opponent Overview)
+The computer opponent needs to prioritize certain logic in order to be "smart". The order of these priorities is:
+First: If there is a winning move, play it
+Second: If the human player has a winning move, block it
+Third: If the computer cannot win or block, it can play randomly
+
+1. In the utils file, extract the wins array from the calculateOutcome function and put it into the global state of the utils file. This array will be used for our new functions, and we don't want to rewrite it for every function.
+2. Write a new function winningMove that takes an array as a parameter
+ - The function will loop over the wins array and destructure the three indexes from each inner array into a,b,c (just like in calculateOutcome)
+ - For each inner array, check to see if a and b are O and c is null, a is null and b and c are O, or b is null and a and c are O
+  - Note: This is checking to see if there are any winning sets of three indexes where one of the indexes is null. The null index is where O can play to win!
+ - If an inner array is found, loop through it and check to see if the input array of the function at the index of the inner array is null
+  - Something like this: (if inputArray[winningIndexes[i]] === null)
+- Return the null index
+3. Export the new function and import it into the Games file
+4. Inside the setTimeout in the handleClick, add the following:
+ - Check to see if winningMove(boardCopy) is truthy
+ - If it is, set a variable winMove to the output of winningMove(boardCopy)
+ - Set boardCopy at index winMove to "O"
+ - Use setBoard() to set the board in state to boardCopy
+ - set xIsNext to true
+5. Back in utils, write another function blockingMove that take an array as a parameter
+ - This function will be identical to winningMove, except it will be checking for X's instead of O's in the conditional
+  - Note: This will check for winning moves for X, which the computer whould block
+6. Export the function and import it into the Games file
+7. Inside the setTimeout in the handleClick, underneath the if statement that checks for winningMove, write a new if else statement
+ - If blockingMove(boardCopy) is truthy, set a variable blockMove to the output of blockingMove(boardCopy)
+ - Set boardCopy at index blockingMove to "O"
+ - Use setBoard() to set the board in state to boardCopy
+ - Set xIsNext to true
+8. Make sure the original logic for making a random play is still intact, and wrap it in an else statement (it should only run if the computer can't win or block)
+
 ## Reflection
 
 My first thought was to implement this with vanilla JavaScript. After planning it, I realized manually making all of the elements combined with lots of conditional logic would make it a very tedious process, and it would be prone to lots of errors. I decided to use React because it made making the page easier and more straightforward. It's probably also faster since the whole page isn't reloading when a single cell is updated. The upside of using React was that the smaller quality of life improvements (delaying the computer's move, conditionally disabling buttons) were much easier to get working once the basic functonality for the game was working. State and props also made the flow of data easier to manage. I was also able to implement styles to individual parts of the page without a CSS sheet by using style variables and passing them ino the JSX elements. 
+
+## Advanced Reflection
+
+I chose to use useEffect for the scoreboard so that I wouldn't have to update the scoreboard conditionally after each play in the handleClick function. The state of scoreboard will change only if there is an actual outcome (a win or a tie). I also used useEffect to reset the scoreboard when the game mode changes. The original calculateOutcome function made writing the new computer game logic pretty straightforward. I just needed to check use the lookup table and look for wins where one cell was null but the other two were the same. If two of the cells are "O", then the computer sees a win and plays in the null cell. If the two cells are "X", the computer will do the same thing but block instead. I can't just check for two identical cells and one null because the computer needs to prioitize wins over blocks. The action it takes is the same whether it's winning or blocking, but it would lose a lot more often if it sometimes ignores its own winning moves just to block.
+
+Possible Improvements and Notes:
+1. The best opening move is the center cell. The computer goes second so it usually can't play there. If center cell is open on its first move, it should take it. Otherwise, it should play in one of the corners. The corners are the second-best opening moves since they give you two directions to win from. 
+2. The computer could check for winning combinations from the lookup table where there is one "O" and two nulls and play in one of the null cells. This would allow it to progress towards a winning move. This situation actually ends up being rare when it's not going first though. It has to react to the human player, and if the human player is actually trying to win, the computer will always either be blocking or playing a winning move. At the end of the day, the computer can only play at most 4 moves in a single game. It will need to start blocking on its second move, and can't possibly win until its third move. It realistically should never have an opportinity to set itself up for a win two moves in the future.
+3. The computer is vulnerable to "forking" (when the human player makes a move that gives them two possible wins). You can win 100% of the time if you know how to exploit this. Since the computer goes second, it can't really avoid defend itself from this tactic. You can sort of control where the computer plays since it will always block when it can't win. You can use that behavior to set up a fork. The easiest way to fix this would be to allow the computer to go first. It would also need to prioritize forking moves itself when it goes first instead of normal progressing moves. For now though, the computer always goes second.
