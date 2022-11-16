@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/challenge-tictactoe/static/js/main.ea905d94.js",
+    "index.html": "/challenge-tictactoe/index.html",
+    "main.ea905d94.js.map": "/challenge-tictactoe/static/js/main.ea905d94.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.ea905d94.js"
+  ]
+}
