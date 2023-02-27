@@ -50,7 +50,7 @@ const Game = () => {
         setXIsNext(!xIsNext);
         if (singlePlayer === true && calculateOutcome(boardCopy) === null) {
             setTimeout(() => {
-                if (winningMove(boardCopy)) {
+                if (winningMove(boardCopy) || winningMove(boardCopy) === 0) {
                     let winMove = winningMove(boardCopy);
                     boardCopy[winMove] = "O";
                     setBoard(boardCopy);
