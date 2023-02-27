@@ -44,7 +44,7 @@ const Game = () => {
 
     const handleClick = (i) => {
         const boardCopy = [...board];
-        if (winner || boardCopy[i]) return;
+        if (winner || boardCopy[i] || (singlePlayer && !xIsNext)) return;
         boardCopy[i] = xIsNext ? 'X' : 'O';
         setBoard(boardCopy);
         setXIsNext(!xIsNext);
